@@ -34,7 +34,7 @@ class LessonAdmin(admin.ModelAdmin):
 class QuestionAdmin(admin.ModelAdmin):
 
     inlines = [ChoiceInline]
-    list_display = ('text')
+    list_display = ['text']
 
 
 admin.site.register(Course, CourseAdmin)
