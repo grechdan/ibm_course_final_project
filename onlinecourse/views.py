@@ -145,19 +145,6 @@ def enroll(request, course_id):
     return HttpResponseRedirect(reverse(viewname='onlinecourse:course_details', args=(course.id,)))
 
 
-def submit(request, course_id):
-
-    user = request.user
-    course = get_object_or_404(Course, pk=course_id)
-    enrollment = Enrollment.objects.get(user=user, course=course)
-    submission = Submission.objects.create(enrollment=enrollment)
-    choices = extract_answers(request)
-    submission.choices.set(choices)
-    submission_id = submission.id
-    
-    return HttpResponseRedirect(reverse(viewname='onlinecourse:exam_result', args=(course_id, submission_id,)))
-
-
 def extract_answers(request):
     
     submitted_anwsers = []
@@ -173,11 +160,24 @@ def extract_answers(request):
     return submitted_anwsers
 
 
+def submit(request, course_id):
+
+    course = get_object_or_404(Course, pk=course_id)
+    user = request.user
+    enrollment = Enrollment.objects.get(user=user, course=course)
+    submission = Submission.objects.create(enrollment=enrollment)
+    choices = extract_answers(request)
+    submission.choices.set(choices)
+    submission_id = submission.id
+    
+    return HttpResponseRedirect(reverse(viewname='onlinecourse:exam_result', args=(course_id, submission_id,)))
+
+
 def show_exam_result(request, course_id, submission_id):
 
     context = {}
     course = get_object_or_404(Course, pk=course_id)
-    submission = Submission.objects.get(submission_id)
+    submission = Submission.objects.get(id=submission_id)
     choices = submission.choices.all()
     total_score = 0
     for choice in choices:
